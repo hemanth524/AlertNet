@@ -1,8 +1,7 @@
-/* ---------------------------- server/controllers/incidentController.js ---------------------------- */
-
 import Incident from '../models/Incident.js';
 import User from '../models/User.js';
 import cloudinary from 'cloudinary';
+import { sendAndStoreNotification } from './notificationController.js'; // 👈 import it
 
 export const uploadIncident = (io) => async (req, res) => {
   try {
@@ -30,14 +29,19 @@ export const uploadIncident = (io) => async (req, res) => {
 
     console.log("✅ Incident uploaded by", req.user.id);
 
-    // Notify reporter
-    io.to(req.user.id).emit("notification", {
+    // Fetch reporter for saving notification
+    const reporter = await User.findById(req.user.id);
+
+    // Create self notification
+    const reporterNotification = {
       message: "You have reported this incident.",
-      incident,
-      type: "self",
-      reporterId: req.user.id,
-    });
-    console.log("📨 Notified reporter", req.user.id);
+      type: "self-report",
+      incidentId: incident._id,
+      createdAt: new Date(),
+      incidentObj: incident, // for client use
+    };
+
+    await sendAndStoreNotification(io, [reporter], reporterNotification);
 
     // Notify nearby users (within 5km)
     const nearbyUsers = await User.find({
@@ -53,17 +57,15 @@ export const uploadIncident = (io) => async (req, res) => {
       },
     });
 
-    console.log("📍 Nearby users found:", nearbyUsers.length);
+    const areaNotification = {
+      message: "New incident reported near your area!",
+      type: "alert",
+      incidentId: incident._id,
+      createdAt: new Date(),
+      incidentObj: incident, // for client use
+    };
 
-    nearbyUsers.forEach((user) => {
-      io.to(user._id.toString()).emit("notification", {
-        message: "New incident reported near your area!",
-        incident,
-        type: "area",
-        reporterId: req.user.id,
-      });
-      console.log("📨 Notified nearby user:", user._id.toString());
-    });
+    await sendAndStoreNotification(io, nearbyUsers, areaNotification);
 
     res.status(201).json({ message: 'Incident uploaded', incident });
   } catch (err) {
@@ -71,6 +73,7 @@ export const uploadIncident = (io) => async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 export const helpIncident = (io) => async (req, res) => {
   const { incidentId } = req.params;

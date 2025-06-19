@@ -11,6 +11,7 @@ import { fileURLToPath } from 'url';
 
 import authRoutes from './routes/auth.js';
 import incidentRoutes from './routes/incident.js';
+import userRoutes from './routes/userRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,6 +43,8 @@ cloudinary.v2.config({
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/incidents', incidentRoutes(io)); // Pass io to route factory
+app.use('/api/users', userRoutes);
+
 
 // Default route
 app.get('/', (req, res) => {
