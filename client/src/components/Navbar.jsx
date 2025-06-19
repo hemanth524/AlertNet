@@ -38,6 +38,9 @@ const Navbar = () => {
               <Link to="/report" className="hover:underline">
                 Report Incident
               </Link>
+              <Link to="/notifications" className="text-white hover:underline">
+                Notifications
+              </Link>
               <Link to="/my-incidents" className="hover:underline">
                 My Incidents
               </Link>

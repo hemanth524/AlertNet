@@ -12,10 +12,11 @@ const Signup = () => {
     email: "",
     password: "",
     phone: "",
+    location: "", // typed location string
   });
 
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -24,17 +25,57 @@ const Signup = () => {
     }));
   };
 
+  const getCoordinatesFromLocation = async (location) => {
+    try {
+      const query = location.toLowerCase().includes("india")
+        ? location
+        : `${location}, India`;
+
+      const res = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&key=991d0eb7e0aa4fe191a3e71bbe3b62c7`
+      );
+
+      if (!res.data.results || res.data.results.length === 0) {
+        throw new Error("Location not found. Please try a more specific place.");
+      }
+
+      const { lat, lng } = res.data.results[0].geometry;
+      return [lng, lat]; // GeoJSON: [longitude, latitude]
+    } catch (err) {
+      console.error("Geocoding error:", err.message);
+      throw err;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setMessage("");
+    setLoading(true);
+
+    const { name, email, password, phone, location } = formData;
+
+    if (!name || !email || !password || !phone || !location) {
+      setMessage("All fields are required.");
+      setLoading(false);
+      return;
+    }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", formData);
-      login(res.data.user, res.data.token); // set context
+      const coordinates = await getCoordinatesFromLocation(location);
+
+      const res = await axios.post("http://localhost:5000/api/auth/register", {
+        name,
+        email,
+        password,
+        phone,
+        location,
+        coordinates,
+      });
+
+      login(res.data.user, res.data.token);
       navigate("/dashboard");
     } catch (err) {
-      setMessage(err.response?.data?.message || "Signup failed");
+      setMessage(err.response?.data?.message || "Signup failed. Check location or try again.");
     } finally {
       setLoading(false);
     }
@@ -92,6 +133,19 @@ const Signup = () => {
               required
               value={formData.phone}
               onChange={handleChange}
+              className="w-full px-4 py-2 border rounded mt-1"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Location (City/Area)</label>
+            <input
+              type="text"
+              name="location"
+              required
+              value={formData.location}
+              onChange={handleChange}
+              placeholder="e.g. Guntur, Andhra Pradesh"
               className="w-full px-4 py-2 border rounded mt-1"
             />
           </div>

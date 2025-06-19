@@ -1,6 +1,12 @@
 // models/User.js
-
 import mongoose from 'mongoose';
+
+const notificationSchema = new mongoose.Schema({
+  message: String,
+  type: { type: String, enum: ['alert', 'self-report'], default: 'alert' },
+  incidentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Incident' },
+  createdAt: { type: Date, default: Date.now }
+});
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -26,26 +32,27 @@ const userSchema = new mongoose.Schema({
     default: 'user'
   },
 
+  // Replaced coordinates with a manual location name (city/area)
   location: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      default: 'Point'
-    },
-    coordinates: {
-      type: [Number], 
-      default: [0, 0]
-    }
+  type: {
+    type: String,
+    enum: ['Point'],
+    default: 'Point',
   },
+  coordinates: {
+    type: [Number], // [longitude, latitude]
+    required: true,
+  }
+},
 
   points: {
     type: Number,
     default: 0
-  }
+  },
+
+  notifications: [notificationSchema]
 }, {
   timestamps: true
 });
-
-userSchema.index({ location: '2dsphere' });
 
 export default mongoose.model('User', userSchema);
