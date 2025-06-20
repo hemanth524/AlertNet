@@ -1,6 +1,6 @@
-// src/pages/Notifications.jsx
 import React, { useContext } from "react";
 import { NotificationContext } from "../context/NotificationContext";
+import { Link } from "react-router-dom";
 
 const Notifications = () => {
   const { notifications } = useContext(NotificationContext);
@@ -16,19 +16,21 @@ const Notifications = () => {
           {notifications.map((notif, index) => (
             <li
               key={index}
-              className="bg-blue-100 p-4 rounded shadow border border-blue-300"
+              className="bg-blue-100 p-4 rounded shadow border border-blue-300 hover:bg-blue-200 transition"
             >
-              <p className="font-semibold text-blue-900">{notif.message}</p>
-              {notif.incident && (
-                <>
+              {notif.incident ? (
+                <Link to={`/incident/${notif.incident._id}`} className="block">
+                  <p className="font-semibold text-blue-900">{notif.message}</p>
                   <p className="text-sm text-gray-700">
                     <strong>Type:</strong> {notif.incident.type}
                   </p>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-600">
                     <strong>Reported At:</strong>{" "}
                     {new Date(notif.incident.createdAt).toLocaleString()}
                   </p>
-                </>
+                </Link>
+              ) : (
+                <p className="text-blue-900">{notif.message}</p>
               )}
             </li>
           ))}

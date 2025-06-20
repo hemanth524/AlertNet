@@ -74,6 +74,18 @@ export const uploadIncident = (io) => async (req, res) => {
   }
 };
 
+export const getIncidentById = async (req, res) => {
+  try {
+    const incident = await Incident.findById(req.params.id);
+    if (!incident) return res.status(404).json({ message: "Incident not found" });
+
+    res.status(200).json({ incident });
+  } catch (err) {
+    console.error("❌ Error fetching incident:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 export const helpIncident = (io) => async (req, res) => {
   const { incidentId } = req.params;
