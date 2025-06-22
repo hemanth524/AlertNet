@@ -86,6 +86,16 @@ export const getIncidentById = async (req, res) => {
   }
 };
 
+export const getMyIncidents = async (req, res) => {
+  try {
+    const myIncidents = await Incident.find({ reporter: req.user.id }).sort({ createdAt: -1 });
+    res.status(200).json({ incidents: myIncidents });
+  } catch (err) {
+    console.error("❌ Failed to fetch user's incidents:", err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 
 export const helpIncident = (io) => async (req, res) => {
   const { incidentId } = req.params;

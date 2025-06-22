@@ -1,53 +1,53 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { NotificationContext } from "../context/NotificationContext";
+import toast from "react-hot-toast";
 
 const ReportIncidentForm = () => {
   const { token } = useContext(AuthContext);
+  const { fetchNotifications } = useContext(NotificationContext);
 
   const [type, setType] = useState("theft");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
-  const [coordinates, setCoordinates] = useState([0, 0]); // [longitude, latitude]
+  const [coordinates, setCoordinates] = useState([0, 0]);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getCoordinatesFromLocation = async () => {
-  try {
-    // Add ", India" automatically if not included
-    const query = location.toLowerCase().includes("india") ? location : `${location}, India`;
+    try {
+      const query = location.toLowerCase().includes("india")
+        ? location
+        : `${location}, India`;
 
-    const res = await axios.get(
-      `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(query)}&key=991d0eb7e0aa4fe191a3e71bbe3b62c7`
-    );
+      const res = await axios.get(
+        `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+          query
+        )}&key=991d0eb7e0aa4fe191a3e71bbe3b62c7`
+      );
 
-    console.log("Geocode API response:", res.data);
+      if (!res.data.results || res.data.results.length === 0) {
+        toast.error("❌ Location not found. Try a more specific place.");
+        throw new Error("No location results");
+      }
 
-    if (!res.data.results || res.data.results.length === 0) {
-      alert("Location not found. Please be more specific.");
-      throw new Error("No location results");
+      const { lat, lng } = res.data.results[0].geometry;
+      return [lng, lat];
+    } catch (error) {
+      console.error("Geocoding failed:", error.message);
+      toast.error("❌ Failed to get coordinates");
+      throw error;
     }
-
-    const { lat, lng } = res.data.results[0].geometry;
-    return [lng, lat]; // [longitude, latitude]
-  } catch (error) {
-    console.error("Geocoding failed:", error.message);
-    throw error;
-  }
-};
-
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!token) {
-      alert("You must be logged in to report an incident.");
-      return;
-    }
+    if (!token) return toast.error("⚠️ You must be logged in to report an incident.");
 
     if (!description || images.length === 0 || !location) {
-      alert("Please provide a description, at least one image, and a location.");
-      return;
+      return toast.error("⚠️ Please fill all fields and upload at least one image.");
     }
 
     setLoading(true);
@@ -84,15 +84,17 @@ const ReportIncidentForm = () => {
         }
       );
 
-      alert("Incident reported successfully!");
+      toast.success("✅ Incident reported successfully!");
       setType("theft");
       setDescription("");
       setLocation("");
       setImages([]);
       setCoordinates([0, 0]);
+
+      if (fetchNotifications) await fetchNotifications();
     } catch (err) {
       console.error("Error reporting incident:", err.response?.data || err.message);
-      alert("Failed to report incident. Check location or try again.");
+      toast.error("❌ Failed to report incident. Try again.");
     } finally {
       setLoading(false);
     }

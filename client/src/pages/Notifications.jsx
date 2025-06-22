@@ -1,9 +1,32 @@
 import React, { useContext } from "react";
 import { NotificationContext } from "../context/NotificationContext";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 const Notifications = () => {
-  const { notifications } = useContext(NotificationContext);
+  const { notifications, setNotifications,fetchNotifications  } = useContext(NotificationContext);
+  const { token } = useContext(AuthContext);
+
+  const handleDelete = async (id) => {
+  try {
+    const res = await axios.delete(`http://localhost:5000/api/users/notifications/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.status === 200) {
+      await fetchNotifications(); // 🔁 use context method to reload fresh data
+      toast.success("✅ Notification deleted");
+    }
+  } catch (err) {
+    console.error("❌ Failed to delete notification:", err.message);
+    toast.error("❌ Failed to delete notification");
+  }
+};
+
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -13,10 +36,10 @@ const Notifications = () => {
         <p className="text-gray-500">No notifications yet.</p>
       ) : (
         <ul className="space-y-4">
-          {notifications.map((notif, index) => (
+          {notifications.map((notif) => (
             <li
-              key={index}
-              className="bg-blue-100 p-4 rounded shadow border border-blue-300 hover:bg-blue-200 transition"
+              key={notif._id}
+              className="bg-blue-100 p-4 rounded shadow border border-blue-300 hover:bg-blue-200 transition relative"
             >
               {notif.incident ? (
                 <Link to={`/incident/${notif.incident._id}`} className="block">
@@ -32,6 +55,13 @@ const Notifications = () => {
               ) : (
                 <p className="text-blue-900">{notif.message}</p>
               )}
+
+              <button
+                onClick={() => handleDelete(notif._id)}
+                className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600"
+              >
+                Delete
+              </button>
             </li>
           ))}
         </ul>
