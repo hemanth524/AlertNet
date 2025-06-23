@@ -6,66 +6,70 @@ import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
 const Notifications = () => {
-  const { notifications, setNotifications,fetchNotifications  } = useContext(NotificationContext);
+  const { notifications, fetchNotifications } = useContext(NotificationContext);
   const { token } = useContext(AuthContext);
 
   const handleDelete = async (id) => {
-  try {
-    const res = await axios.delete(`http://localhost:5000/api/users/notifications/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await axios.delete(`http://localhost:5000/api/users/notifications/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (res.status === 200) {
-      await fetchNotifications(); // 🔁 use context method to reload fresh data
-      toast.success("✅ Notification deleted");
+      if (res.status === 200) {
+        await fetchNotifications();
+        toast.success("✅ Notification deleted");
+      }
+    } catch (err) {
+      console.error("❌ Failed to delete notification:", err.message);
+      toast.error("❌ Failed to delete notification");
     }
-  } catch (err) {
-    console.error("❌ Failed to delete notification:", err.message);
-    toast.error("❌ Failed to delete notification");
-  }
-};
-
+  };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">🔔 Notifications</h1>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white px-4 py-10">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-4xl font-bold text-center text-red-400 mb-10 drop-shadow-md">
+          🔔 Your Notifications
+        </h1>
 
-      {notifications.length === 0 ? (
-        <p className="text-gray-500">No notifications yet.</p>
-      ) : (
-        <ul className="space-y-4">
-          {notifications.map((notif) => (
-            <li
-              key={notif._id}
-              className="bg-blue-100 p-4 rounded shadow border border-blue-300 hover:bg-blue-200 transition relative"
-            >
-              {notif.incident ? (
-                <Link to={`/incident/${notif.incident._id}`} className="block">
-                  <p className="font-semibold text-blue-900">{notif.message}</p>
-                  <p className="text-sm text-gray-700">
-                    <strong>Type:</strong> {notif.incident.type}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <strong>Reported At:</strong>{" "}
-                    {new Date(notif.incident.createdAt).toLocaleString()}
-                  </p>
-                </Link>
-              ) : (
-                <p className="text-blue-900">{notif.message}</p>
-              )}
-
-              <button
-                onClick={() => handleDelete(notif._id)}
-                className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600"
+        {notifications.length === 0 ? (
+          <p className="text-gray-400 text-center text-lg">No notifications yet. Stay alert!</p>
+        ) : (
+          <ul className="space-y-6">
+            {notifications.map((notif) => (
+              <li
+                key={notif._id}
+                className="relative bg-slate-800 border border-slate-700 rounded-xl p-6 pr-28 shadow-lg shadow-white/80 hover:shadow-yellow-300/80 transition-shadow duration-300"
               >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+                {notif.incident ? (
+                  <Link to={`/incident/${notif.incident._id}`} className="block space-y-2">
+                    <p className="text-xl font-semibold text-red-300">{notif.message}</p>
+                    <p className="text-md">
+                      <span className="font-semibold text-white">Type:</span>{" "}
+                      <span className="text-red-400 font-medium text-lg">{notif.incident.type}</span>
+                    </p>
+                    <p className="text-md text-gray-300">
+                      <span className="font-semibold text-white">Reported At:</span>{" "}
+                      {new Date(notif.incident.createdAt).toLocaleString()}
+                    </p>
+                  </Link>
+                ) : (
+                  <p className="text-red-300 text-base">{notif.message}</p>
+                )}
+
+                <button
+                  onClick={() => handleDelete(notif._id)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 text-sm rounded-md shadow-lg transition-all"
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
