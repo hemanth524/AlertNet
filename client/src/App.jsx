@@ -9,6 +9,7 @@ import ReportIncidentForm from "./components/ReportIncidentForm.jsx";
 import Notifications from "./pages/Notifications.jsx";
 import IncidentDetails from "./pages/IncidentDetails.jsx";
 import MyIncidents from "./pages/MyIncidents.jsx";
+import Footer from "./components/Footer.jsx";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/my-incidents" element={<MyIncidents/>}/>
         <Route path="/profile" element={< Profile/>}/>
       </Routes>
+      
     </>
   );
 }

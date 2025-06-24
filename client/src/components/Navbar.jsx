@@ -15,7 +15,7 @@ const Navbar = () => {
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   return (
-    <nav className="bg-blue-700 text-white shadow-md w-full z-50 relative">
+    <nav className=" bg-slate-500 text-white shadow-md w-full z-50 relative">
       <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold tracking-wide">
