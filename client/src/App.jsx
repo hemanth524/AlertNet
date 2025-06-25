@@ -10,6 +10,9 @@ import Notifications from "./pages/Notifications.jsx";
 import IncidentDetails from "./pages/IncidentDetails.jsx";
 import MyIncidents from "./pages/MyIncidents.jsx";
 import Footer from "./components/Footer.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx"; 
+import AdminUsers from "./pages/admin/AdminUsers.jsx";
+import AdminIncidents from "./pages/admin/AdminIncidents"; 
 
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
         <Route path="/report" element={<ReportIncidentForm/>} />
           <Route path="/incident/:id" element={<IncidentDetails />} />
           <Route path="/my-incidents" element={<MyIncidents/>}/>
+           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+           <Route path="/admin/users" element={<AdminUsers/>}/>
+           <Route path="/admin/incidents" element={<AdminIncidents />} />
         <Route path="/profile" element={< Profile/>}/>
       </Routes>
       

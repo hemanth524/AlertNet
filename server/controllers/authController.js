@@ -18,10 +18,10 @@ export const registerUser = async (req, res) => {
       email,
       password: hashedPassword,
       role: role || "user",
-      address: location, // readable string
+      address: location,
       location: {
         type: "Point",
-        coordinates, // required GeoJSON format: [lng, lat]
+        coordinates,
       },
     });
 
@@ -36,14 +36,32 @@ export const registerUser = async (req, res) => {
   }
 };
 
-
-
-
-// Login user
+// Login user or admin
 export const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, isAdmin } = req.body;
 
+    // Admin login check via .env
+    if (
+      isAdmin &&
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const token = jwt.sign({ id: 'admin_id', role: 'admin' }, process.env.JWT_SECRET, {
+        expiresIn: '7d'
+      });
+
+      return res.status(200).json({
+        token,
+        user: {
+          name: 'Admin',
+          email: process.env.ADMIN_EMAIL,
+          role: 'admin'
+        }
+      });
+    }
+
+    // Normal user login
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid email or password' });
 

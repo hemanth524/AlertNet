@@ -10,7 +10,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const newSocket = io(import.meta.env.VITE_BACKEND_URL || "http://localhost:5000", {
-      transports: ['websocket'],
+      transports: ["websocket"],
     });
     setSocket(newSocket);
 
@@ -20,9 +20,11 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (socket && user) {
+    if (socket && user && user._id) {
+      console.log("✅ Emitting join with userId:", user._id);
       socket.emit("join", user._id);
-      console.log("🧠 Joined socket room:", user._id); // Join personal room
+    } else if (socket && (!user || !user._id)) {
+      console.warn("⚠️ Skipping join: user or user._id is missing");
     }
   }, [socket, user]);
 

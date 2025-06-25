@@ -1,4 +1,3 @@
-// models/User.js
 import mongoose from 'mongoose';
 
 const notificationSchema = new mongoose.Schema({
@@ -32,22 +31,36 @@ const userSchema = new mongoose.Schema({
     default: 'user'
   },
 
-  // Replaced coordinates with a manual location name (city/area)
   location: {
-  type: {
-    type: String,
-    enum: ['Point'],
-    default: 'Point',
+    type: {
+      type: String,
+      enum: ['Point'],
+      default: 'Point'
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
   },
-  coordinates: {
-    type: [Number], // [longitude, latitude]
-    required: true,
-  }
-},
+
+  phone: {
+    type: String,
+    default: ''
+  },
+
+  isTopReporter: {
+    type: Boolean,
+    default: false
+  },
 
   points: {
     type: Number,
     default: 0
+  },
+
+  avatar: {
+    type: String, // will store image URL or path (e.g. /uploads/abc.jpg)
+    default: ''
   },
 
   notifications: [notificationSchema]

@@ -12,6 +12,8 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import incidentRoutes from './routes/incident.js';
 import userRoutes from './routes/userRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,32 +46,38 @@ cloudinary.v2.config({
 app.use('/api/auth', authRoutes);
 app.use('/api/incidents', incidentRoutes(io)); // Pass io to route factory
 app.use('/api/users', userRoutes);
-
+app.use('/api/admin', adminRoutes);
+app.use('/uploads', express.static(path.join(path.resolve(), 'uploads')));
 
 // Default route
 app.get('/', (req, res) => {
   res.send('🚀 AlertNet API is running...');
 });
 
-// Socket.IO
-iosetup(io);
-
+// Socket.IO Setup with Validation
 function iosetup(io) {
   io.on("connection", (socket) => {
-  console.log("User connected");
-   
-  socket.on("join", (userId) => {
-    socket.join(userId); 
-    console.log(`User ${userId} joined their notification room`);
-  });
+    console.log("User connected");
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
+    socket.on("join", (userId) => {
+      // ✅ Ensure userId is a valid MongoDB ObjectId (24 hex characters)
+      if (typeof userId === 'string' && /^[0-9a-fA-F]{24}$/.test(userId)) {
+        socket.join(userId);
+        console.log(`✅ User ${userId} joined their notification room`);
+      } else {
+        console.warn(`❌ Invalid userId received in socket.join:`, userId);
+      }
+    });
+
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
+    });
   });
-});
 }
 
-// ✅ Mongoose connection — updated (no deprecated options)
+iosetup(io);
+
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB Connected'))
   .catch((err) => console.error('❌ MongoDB connection failed:', err.message));

@@ -13,6 +13,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -21,20 +22,37 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage("");
-    setLoading(true);
-    try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", formData);
-      login(res.data.user, res.data.token);
-      navigate("/dashboard");
-    } catch (err) {
-      setMessage(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setMessage("");
+  setLoading(true);
+  try {
+    const res = await axios.post("http://localhost:5000/api/auth/login", {
+      ...formData,
+      isAdmin,
+    });
+
+    const { user, token } = res.data;
+
+    if (isAdmin && user.role !== "admin") {
+      setMessage("❌ You are not authorized as an admin.");
+      return;
     }
-  };
+
+    login(user, token);
+
+    if (user.role === "admin") {
+      navigate("/admin/dashboard");
+    } else {
+      navigate("/dashboard");
+    }
+  } catch (err) {
+    setMessage(err.response?.data?.message || "Login failed");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-yellow-200 to-blue-300 px-4">
@@ -89,6 +107,19 @@ const Login = () => {
                 placeholder="••••••••"
                 className="w-full px-4 py-2 mt-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/80"
               />
+            </div>
+
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="isAdmin"
+                checked={isAdmin}
+                onChange={() => setIsAdmin(!isAdmin)}
+                className="mr-2"
+              />
+              <label htmlFor="isAdmin" className="text-sm text-gray-700">
+                Login as Admin
+              </label>
             </div>
 
             <button

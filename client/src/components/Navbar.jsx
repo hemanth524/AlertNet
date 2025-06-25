@@ -14,8 +14,10 @@ const Navbar = () => {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
+  const isAdmin = user?.role === "admin";
+
   return (
-    <nav className=" bg-slate-500 text-white shadow-md w-full z-50 relative">
+    <nav className="bg-slate-500 text-white shadow-md w-full z-50 relative">
       <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="text-2xl font-bold tracking-wide">
@@ -28,6 +30,19 @@ const Navbar = () => {
             <>
               <Link to="/login" className="hover:underline">Login</Link>
               <Link to="/signup" className="hover:underline">Signup</Link>
+            </>
+          ) : isAdmin ? (
+            <>
+              <Link to="/admin/dashboard" className="hover:underline">Dashboard</Link>
+              <Link to="/admin/users" className="hover:underline">Manage Users</Link>
+              <Link to="/admin/incidents" className="hover:underline">All Incidents</Link>
+              <span className="font-semibold">👤 {user?.name || "Admin"}</span>
+              <button
+                onClick={handleLogout}
+                className="bg-white text-blue-700 font-medium px-3 py-1 rounded hover:bg-gray-200 transition"
+              >
+                Logout
+              </button>
             </>
           ) : (
             <>
@@ -67,16 +82,26 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+      {/* Mobile Dropdown */}
       {menuOpen && token && (
         <div className="sm:hidden bg-blue-800 text-white absolute w-full left-0 shadow-lg z-40">
           <div className="flex flex-col items-start gap-3 px-6 py-4 text-sm">
-            <Link to="/dashboard" onClick={toggleMenu}>Dashboard</Link>
-            <Link to="/report" onClick={toggleMenu}>Report Incident</Link>
-            <Link to="/notifications" onClick={toggleMenu}>Notifications</Link>
-            <Link to="/my-incidents" onClick={toggleMenu}>My Incidents</Link>
-            <Link to="/help" onClick={toggleMenu}>Help Others</Link>
-            <Link to="/profile" onClick={toggleMenu}>Profile</Link>
+            {isAdmin ? (
+              <>
+                <Link to="/admin/dashboard" onClick={toggleMenu}>Dashboard</Link>
+                <Link to="/admin/users" onClick={toggleMenu}>Manage Users</Link>
+                <Link to="/admin/incidents" onClick={toggleMenu}>All Incidents</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/dashboard" onClick={toggleMenu}>Dashboard</Link>
+                <Link to="/report" onClick={toggleMenu}>Report Incident</Link>
+                <Link to="/notifications" onClick={toggleMenu}>Notifications</Link>
+                <Link to="/my-incidents" onClick={toggleMenu}>My Incidents</Link>
+                <Link to="/help" onClick={toggleMenu}>Help Others</Link>
+                <Link to="/profile" onClick={toggleMenu}>Profile</Link>
+              </>
+            )}
             <span className="font-semibold">👤 {user?.name || "User"}</span>
           </div>
         </div>

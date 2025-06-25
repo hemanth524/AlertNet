@@ -5,6 +5,8 @@ import img3 from '../assets/img3.png';
 import img4 from '../assets/img4.png';
 import img5 from '../assets/img5.png';
 import Footer from '../components/Footer';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 // Section 1 Slides
 const textSlides = [
@@ -66,6 +68,7 @@ const incidentSlides = [
 ];
 
 const UserDashboard = () => {
+  const [topReporters, setTopReporters] = useState([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [currentIncidentIndex, setCurrentIncidentIndex] = useState(0);
 
@@ -92,6 +95,18 @@ const UserDashboard = () => {
       prev === incidentSlides.length - 1 ? 0 : prev + 1
     );
   };
+
+  useEffect(() => {
+  const fetchTopReporters = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/users/top-reporters");
+      setTopReporters(res.data);
+    } catch (err) {
+      console.error("Failed to fetch top reporters", err);
+    }
+  };
+  fetchTopReporters();
+}, []);
 
   const incident = incidentSlides[currentIncidentIndex];
 
@@ -176,6 +191,36 @@ const UserDashboard = () => {
           </div>
         </div>
       </section>
+      {/* Section 3: Top Reporters */}
+<section className="bg-white shadow-lg hover:shadow-yellow-300/80 rounded-xl p-6 max-w-6xl mx-auto mt-12">
+  <h2 className="text-4xl font-bold text-center text-blue-700 mb-6">
+    🏆 Top 5 Reporters
+  </h2>
+
+  <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {topReporters.map((reporter, index) => (
+      <div
+        key={index}
+        className="flex flex-col items-center gap-3 p-4 border rounded-lg bg-slate-100 hover:shadow-md transition-shadow"
+      >
+        <img
+          src={reporter.avatar}
+          alt={reporter.name}
+          className="w-20 h-20 rounded-full object-cover border shadow"
+        />
+        <div className="text-center">
+          <h3 className="text-lg font-semibold text-gray-800">{reporter.name}</h3>
+          <p className="text-sm text-gray-600">🚨 Reports: {reporter.incidentCount}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {topReporters.length === 0 && (
+    <p className="text-center text-gray-500 mt-6">No top reporters found.</p>
+  )}
+</section>
+
       <Footer/>
     </div>
     

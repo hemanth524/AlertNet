@@ -8,12 +8,13 @@ import toast from "react-hot-toast";
 export const NotificationContext = createContext();
 
 export const NotificationProvider = ({ children }) => {
-  const { token } = useContext(AuthContext);
+  const { token, user } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
   const [notifications, setNotifications] = useState([]);
 
   const fetchNotifications = async () => {
-    if (!token) return;
+    if (!token || !user || user.role !== "user") return;
+
     try {
       const res = await axios.get("http://localhost:5000/api/users/notifications", {
         headers: { Authorization: `Bearer ${token}` },
@@ -24,26 +25,22 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
-  // 🔁 Fetch notifications when token changes
   useEffect(() => {
     fetchNotifications();
-  }, [token]);
+  }, [token, user]);
 
-  // 🔔 Listen to real-time notifications from server
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !user || user.role !== "user") return;
 
     const handleNotification = (newNotif) => {
       setNotifications((prev) => [newNotif, ...prev]);
 
-      // Show toast for nearby incident
       if (newNotif.type === "alert") {
         toast.success(`🚨 Nearby Incident: ${newNotif.incident?.type || "Alert"}`, {
           duration: 6000,
         });
       }
 
-      // Optional: show toast for self-report too
       if (newNotif.type === "self-report") {
         toast("✅ Your incident has been reported", {
           icon: "📝",
@@ -56,7 +53,7 @@ export const NotificationProvider = ({ children }) => {
     return () => {
       socket.off("notification", handleNotification);
     };
-  }, [socket]);
+  }, [socket, user]);
 
   return (
     <NotificationContext.Provider value={{ notifications, setNotifications, fetchNotifications }}>

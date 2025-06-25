@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
 
 export const AuthContext = createContext();
 
@@ -7,6 +7,7 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
 
   const login = (userData, jwtToken) => {
+    console.log("🔐 Logging in with user:", userData);
     setToken(jwtToken);
     setUser(userData);
     localStorage.setItem("token", jwtToken);
