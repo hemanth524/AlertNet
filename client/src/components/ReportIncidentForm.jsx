@@ -1,9 +1,10 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { NotificationContext } from "../context/NotificationContext";
 import toast from "react-hot-toast";
-import IndiaMap from "../assets/indiamap.png"; // 👈 your image
+import IndiaMap from "../assets/indiamap.png";
 
 const ReportIncidentForm = () => {
   const { token } = useContext(AuthContext);
@@ -15,6 +16,7 @@ const ReportIncidentForm = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchState, setSearchState] = useState("");
+  const navigate = useNavigate();
 
   const getCoordinatesFromLocation = async () => {
     try {
@@ -100,13 +102,13 @@ const ReportIncidentForm = () => {
   };
 
   const handleStateSearch = () => {
-    if (!searchState.trim()) return toast.error("Enter a state name.");
-    // TODO: You can integrate a modal here or redirect to `/incidents?state=searchState`
+    if (!searchState.trim()) return toast.error("⚠️ Enter a state name.");
     toast.success(`🔎 Searching incidents in ${searchState}...`);
+    navigate(`/incidents?state=${encodeURIComponent(searchState.trim())}`);
   };
 
   return (
-    <div className=" bg-slate-900 text-white flex flex-col md:flex-row gap-8 px-4 py-8">
+    <div className="bg-slate-900 text-white flex flex-col md:flex-row gap-8 px-4 py-8">
       {/* LEFT SIDE: MAP & SEARCH */}
       <div className="md:w-1/2 flex flex-col items-center justify-start gap-4">
         <div className="w-1/2 justify-center flex gap-2">

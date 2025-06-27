@@ -25,15 +25,26 @@ const incidentSchema = new mongoose.Schema({
       required: true
     }
   },
+ state: {
+    type: String,
+    required: function () {
+        return this.uploadedByAdmin === true;
+    },
+    index: true
+},
   status: {
     type: String,
     enum: ['pending', 'real', 'fake'],
-    default: 'pending'
+    default: 'real'
+  },
+  uploadedByAdmin: {
+    type: Boolean,
+    default: false
   },
   reporter: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
   },
   verifiedBy: [{
     type: mongoose.Schema.Types.ObjectId,

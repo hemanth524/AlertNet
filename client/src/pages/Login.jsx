@@ -91,7 +91,7 @@ const Login = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                placeholder="you@example.com"
+                placeholder="you@gmail.com"
                 className="w-full px-4 py-2 mt-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/80"
               />
             </div>
@@ -104,7 +104,7 @@ const Login = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                placeholder="••••••••"
+                placeholder="Enter the Password"
                 className="w-full px-4 py-2 mt-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/80"
               />
             </div>

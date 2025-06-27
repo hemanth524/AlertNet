@@ -52,7 +52,7 @@ export const uploadIncident = (io) => async (req, res) => {
             type: "Point",
             coordinates,
           },
-          $maxDistance: 5000,
+          $maxDistance: 20000,
         },
       },
     });

@@ -33,9 +33,11 @@ const Navbar = () => {
             </>
           ) : isAdmin ? (
             <>
+              <Link to="/" className="hover:underline">Home</Link>
               <Link to="/admin/dashboard" className="hover:underline">Dashboard</Link>
               <Link to="/admin/users" className="hover:underline">Manage Users</Link>
               <Link to="/admin/incidents" className="hover:underline">All Incidents</Link>
+              <Link to="/admin/report-incident" className="hover:underline text-yellow-300 font-medium">➕ Upload Incident</Link>
               <span className="font-semibold">👤 {user?.name || "Admin"}</span>
               <button
                 onClick={handleLogout}
@@ -50,7 +52,7 @@ const Navbar = () => {
               <Link to="/report" className="hover:underline">Report Incident</Link>
               <Link to="/notifications" className="hover:underline">Notifications</Link>
               <Link to="/my-incidents" className="hover:underline">My Incidents</Link>
-              <Link to="/help" className="hover:underline">Help Others</Link>
+             
               <Link to="/profile" className="hover:underline">Profile</Link>
               <span className="font-semibold">👤 {user?.name || "User"}</span>
               <button
@@ -91,6 +93,7 @@ const Navbar = () => {
                 <Link to="/admin/dashboard" onClick={toggleMenu}>Dashboard</Link>
                 <Link to="/admin/users" onClick={toggleMenu}>Manage Users</Link>
                 <Link to="/admin/incidents" onClick={toggleMenu}>All Incidents</Link>
+                <Link to="/admin/report-incident" onClick={toggleMenu}>➕ Upload Incident</Link>
               </>
             ) : (
               <>
