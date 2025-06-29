@@ -15,11 +15,15 @@ import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminUsers from "./pages/admin/AdminUsers.jsx";
 import AdminIncidents from "./pages/admin/AdminIncidents"; 
 import AdminReportIncident from "./pages/admin/AdminReportIncident.jsx";
-
+import ChatPage from "./pages/ChatPage";
+import ChatInbox from "./pages/ChatInbox.jsx";
+import { ToastContainer } from "react-toastify";
+import GlobalMessageListener from "./components/GlobalMessageListener";
 function App() {
   return (
     <>
       <Navbar />
+      <GlobalMessageListener /> 
       <Routes>
         <Route path="/" element={< Home/>}/>
         <Route path="/login" element={<Login />} />
@@ -32,11 +36,14 @@ function App() {
            <Route path="/admin/dashboard" element={<AdminDashboard />} />
            <Route path="/admin/users" element={<AdminUsers/>}/>
            <Route path="/admin/incidents" element={<AdminIncidents />} />
+          <Route path="/chat/:incidentId/:receiverId" element={<ChatPage />} />
+
            <Route path="/admin/report-incident" element={<AdminReportIncident />} />
            <Route path="/incidents" element={<IncidentsByState />} />
-
+          <Route path="/chat-inbox" element={<ChatInbox />} />
         <Route path="/profile" element={< Profile/>}/>
       </Routes>
+       <ToastContainer />
       
     </>
   );

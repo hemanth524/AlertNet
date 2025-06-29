@@ -8,13 +8,13 @@ import http from 'http';
 import cloudinary from 'cloudinary';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import chatRoutes from './routes/chatRoutes.js';
 import authRoutes from './routes/auth.js';
 import incidentRoutes from './routes/incident.js';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-
-
+import User from './models/User.js';
+import ChatMessage from './models/ChatMessage.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -48,6 +48,7 @@ app.use('/api/incidents', incidentRoutes(io)); // Pass io to route factory
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/uploads', express.static(path.join(path.resolve(), 'uploads')));
+app.use('/api/chat', chatRoutes);
 
 // Default route
 app.get('/', (req, res) => {
@@ -57,22 +58,52 @@ app.get('/', (req, res) => {
 // Socket.IO Setup with Validation
 function iosetup(io) {
   io.on("connection", (socket) => {
-    console.log("User connected");
+    console.log("✅ User connected");
 
-    socket.on("join", (userId) => {
-      // ✅ Ensure userId is a valid MongoDB ObjectId (24 hex characters)
-      if (typeof userId === 'string' && /^[0-9a-fA-F]{24}$/.test(userId)) {
-        socket.join(userId);
-        console.log(`✅ User ${userId} joined their notification room`);
-      } else {
-        console.warn(`❌ Invalid userId received in socket.join:`, userId);
-      }
+    socket.on("joinChatRoom", (roomId) => {
+        socket.join(roomId);
+        console.log(`✅ User joined chat room: ${roomId}`);
+    });
+
+    socket.on("sendMessage", async (data) => {
+        try {
+            const { incidentId, senderId, receiverId, text } = data;
+
+            if (!incidentId || !senderId || !receiverId || !text) {
+                console.warn("⚠️ Incomplete message data:", data);
+                return;
+            }
+
+            const roomId = `${incidentId}_${[senderId, receiverId].sort().join("_")}`;
+
+            const message = await ChatMessage.create({
+                incidentId,
+                sender: senderId,
+                receiver: receiverId,
+                text,
+                roomId,
+            });
+          
+            io.to(roomId).emit("receiveMessage", {
+                _id: message._id,
+                incidentId,
+                sender: senderId,
+                
+                receiver: receiverId,
+                text,
+                createdAt: message.createdAt,
+            });
+
+            console.log(`✉️ Message saved & emitted in room: ${roomId}`);
+        } catch (err) {
+            console.error("❌ Error saving message:", err.message);
+        }
     });
 
     socket.on("disconnect", () => {
-      console.log("User disconnected");
+        console.log("❌ User disconnected");
     });
-  });
+});
 }
 
 iosetup(io);
