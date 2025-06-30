@@ -55,6 +55,12 @@ app.get('/', (req, res) => {
   res.send('🚀 AlertNet API is running...');
 });
 
+app.use(express.static(path.join(__dirname, "build")));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "build", "index.html"));
+});
+
 // Socket.IO Setup with Validation
 function iosetup(io) {
   io.on("connection", (socket) => {
