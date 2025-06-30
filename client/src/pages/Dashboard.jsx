@@ -194,10 +194,10 @@ const UserDashboard = () => {
       {/* Section 3: Top Reporters */}
 <section className="bg-white shadow-lg hover:shadow-yellow-300/80 rounded-xl p-6 max-w-6xl mx-auto mt-12">
   <h2 className="text-4xl font-bold text-center text-blue-700 mb-6">
-    🏆 Top 5 Reporters
+    🏆 Top Reporters
   </h2>
 
-  <div className="grid sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+  <div className="grid sm:grid-cols-1  md:grid-cols-3 lg:grid-cols-3 gap-6">
     {topReporters.map((reporter, index) => (
       <div
         key={index}

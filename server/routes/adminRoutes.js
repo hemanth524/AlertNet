@@ -1,5 +1,5 @@
 import express from 'express';
-import { getAllUsers, markTopReporters, getAllIncidents, getLatestIncidents, getAdminStats, uploadIncidentAsAdmin,getIncidentsByState  } from '../controllers/adminController.js';
+import { getAllUsers, markTopReporters, getAllIncidents, getLatestIncidents, getAdminStats, uploadIncidentAsAdmin,getIncidentsByState ,deleteUser  } from '../controllers/adminController.js';
 import requireAuth from '../middleware/requireAuth.js';
 import adminOnly from '../middleware/adminOnly.js';
 
@@ -14,5 +14,6 @@ router.get('/incidents', getAllIncidents);
 router.get('/latest-incidents', getLatestIncidents);
 router.get('/stats', getAdminStats);
 router.post('/upload-incident', uploadIncidentAsAdmin);
+router.delete('/users/:userId', deleteUser);
 
 export default router;
