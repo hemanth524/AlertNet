@@ -34,13 +34,17 @@ export const getChatMessages = async (req, res) => {
 // GET /api/chat/my-chats
 export const getMyChats = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid user ID provided" });
+        }
+
         const chats = await ChatMessage.find({ receiver: userId })
             .populate("sender", "name avatar")
             .populate("incidentId", "type")
             .sort({ updatedAt: -1 });
 
-        // Group by incidentId + senderId
         const uniqueChats = {};
         chats.forEach(chat => {
             const key = `${chat.incidentId._id}_${chat.sender._id}`;
@@ -56,7 +60,7 @@ export const getMyChats = async (req, res) => {
 
         res.json(Object.values(uniqueChats));
     } catch (err) {
-        console.error(err);
+        console.error("❌ Error in getMyChats:", err);
         res.status(500).json({ message: "Server error" });
     }
 };
