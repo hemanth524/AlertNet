@@ -15,7 +15,7 @@ const Notifications = () => {
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/users/notifications/${id}`,
+        `https://alertnet-backend-mnnu.onrender.com/api/users/notifications/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

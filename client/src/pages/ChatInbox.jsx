@@ -12,7 +12,7 @@ const ChatInbox = () => {
     useEffect(() => {
         const fetchChats = async () => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/chat/my-chats`, {
+                const res = await fetch(`https://alertnet-backend-mnnu.onrender.com/api/chat/my-chats`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const data = await res.json();
@@ -29,7 +29,7 @@ const ChatInbox = () => {
 
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/api/chat/${incidentId}/${otherUserId}`,
+                `https://alertnet-backend-mnnu.onrender.com/api/chat/${incidentId}/${otherUserId}`,
                 {
                     method: "DELETE",
                     headers: { Authorization: `Bearer ${token}` }
@@ -51,20 +51,20 @@ const ChatInbox = () => {
     };
 
     return (
-        <div className="relative min-h-[93vh] flex flex-col items-center bg-gradient-to-b from-slate-900 to-slate-800 text-white p-6 overflow-hidden">
+        <div className="relative min-h-[93vh] flex flex-col justify-center items-center bg-gradient-to-b from-slate-900 to-slate-800 text-white p-6 overflow-hidden">
 
             {/* Top-left image */}
             <img
                 src={img6}
                 alt="Person sending message"
-                className="hidden sm:block absolute top-4 left-4 w-98 opacity-70 animate-float pointer-events-none"
+                className="hidden md:block  absolute top-4 left-4 w-98 opacity-70 animate-float pointer-events-none"
             />
 
             {/* Bottom-right image */}
             <img
                 src={img7}
                 alt="Person receiving message"
-                className="hidden sm:block absolute bottom-4 right-4 w-98 opacity-80 animate-float-reverse pointer-events-none"
+                className="hidden md:block  absolute bottom-4 right-4 w-98 opacity-80 animate-float-reverse pointer-events-none"
             />
 
             <div className="w-full max-w-2xl flex flex-col item-center">

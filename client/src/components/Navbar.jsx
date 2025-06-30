@@ -25,7 +25,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Links */}
-        <div className="hidden sm:flex flex-wrap items-center gap-6 text-sm md:text-base">
+        <div className="hidden  sm:flex flex-wrap items-center gap-6 text-sm md:text-base">
           {!token ? (
             <>
               <Link to="/login" className="hover:underline">Login</Link>
@@ -86,26 +86,28 @@ const Navbar = () => {
 
       {/* Mobile Dropdown */}
       {menuOpen && token && (
-        <div className="sm:hidden bg-blue-800 text-white absolute w-full left-0 shadow-lg z-40">
-          <div className="flex flex-col items-start gap-3 px-6 py-4 text-sm">
+        <div className="sm:hidden  bg-gradient-to-br from-blue-100 to-red-200 text-white absolute w-full flex  justify-center items-center  shadow-lg z-40">
+          <div className="flex flex-col items-start gap-3 px-6 py-4 text-sm ">
             {isAdmin ? (
               <>
-                <Link to="/admin/dashboard" onClick={toggleMenu}>Dashboard</Link>
-                <Link to="/admin/users" onClick={toggleMenu}>Manage Users</Link>
-                <Link to="/admin/incidents" onClick={toggleMenu}>All Incidents</Link>
-                <Link to="/admin/report-incident" onClick={toggleMenu}>➕ Upload Incident</Link>
+                <Link   className="border bg-white text-black rounded text-lg  w-40  text-center"   to="/admin/dashboard" onClick={toggleMenu}>Dashboard</Link>
+                <Link  className="border bg-white text-black rounded text-lg  w-40  text-center"  to="/admin/users" onClick={toggleMenu}>Manage Users</Link>
+                <Link  className="border bg-white text-black rounded text-lg  w-40  text-center"  to="/admin/incidents" onClick={toggleMenu}>All Incidents</Link>
+                <Link   className="border bg-white text-black rounded text-lg  w-40  text-center" to="/admin/report-incident" onClick={toggleMenu}>Upload Incident</Link>
               </>
             ) : (
-              <>
-                <Link to="/dashboard" onClick={toggleMenu}>Dashboard</Link>
-                <Link to="/report" onClick={toggleMenu}>Report Incident</Link>
-                <Link to="/notifications" onClick={toggleMenu}>Notifications</Link>
-                <Link to="/my-incidents" onClick={toggleMenu}>My Incidents</Link>
-                <Link to="/help" onClick={toggleMenu}>Help Others</Link>
-                <Link to="/profile" onClick={toggleMenu}>Profile</Link>
+              <> 
+                <Link className="border bg-white text-black rounded text-lg  w-40  text-center" to="/dashboard" onClick={toggleMenu}>Dashboard</Link>
+                <Link className="border bg-white text-black rounded text-lg w-40 text-center"  to="/report" onClick={toggleMenu}>Report Incident</Link>
+                <Link className="border bg-white text-black rounded text-lg w-40 text-center"  to="/notifications" onClick={toggleMenu}>Notifications</Link>
+                <Link className="border bg-white text-black rounded text-lg w-40 text-center"  to="/my-incidents" onClick={toggleMenu}>My Incidents</Link>
+                
+                <Link  className="border bg-white text-black rounded text-lg w-40 text-center"  to="/chat-inbox"  onClick={toggleMenu}>Chat Inbox</Link>
+                <Link  className="border bg-white text-black rounded text-lg w-40 text-center"  to="/profile" onClick={toggleMenu}>Profile</Link>
+ 
               </>
             )}
-            <span className="font-semibold">👤 {user?.name || "User"}</span>
+            <span  className="font-semibold text-black text-lg">👤 {user?.name || "User"}</span>
           </div>
         </div>
       )}

@@ -14,14 +14,14 @@ const ChatPage = () => {
       <img
         src={img6}
         alt="Person sending message"
-        className="hidden sm:block absolute top-4 left-4  opacity-70 animate-float pointer-events-none"
+        className="hidden md:block absolute top-4 left-4  opacity-70 animate-float pointer-events-none"
       />
 
       {/* Bottom-right image */}
       <img
         src={img7}
         alt="Person receiving message"
-        className="hidden sm:block absolute bottom-8 right-4  opacity-80 animate-float-reverse pointer-events-none"
+        className="hidden md:block absolute bottom-8 right-4  opacity-80 animate-float-reverse pointer-events-none"
       />
 
       <ChatBox incidentId={incidentId} receiverId={receiverId} />

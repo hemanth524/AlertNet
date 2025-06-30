@@ -18,7 +18,7 @@ const AdminUsers = () => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/admin/users`,
+          `https://alertnet-backend-mnnu.onrender.com/api/admin/users`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -42,7 +42,7 @@ const AdminUsers = () => {
   const updateTopReporters = async () => {
     try {
       await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/admin/top-reporters`,
+        `https://alertnet-backend-mnnu.onrender.com/api/admin/top-reporters`,
         { topUserIds: selectedIds },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -60,7 +60,7 @@ const AdminUsers = () => {
         : [...selectedIds, id];
 
       await axios.patch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/admin/top-reporters`,
+        `https://alertnet-backend-mnnu.onrender.com/api/admin/top-reporters`,
         { topUserIds: updatedIds },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -86,7 +86,7 @@ const AdminUsers = () => {
       return;
     try {
       await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
+        `https://alertnet-backend-mnnu.onrender.com/api/admin/users/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -9,7 +9,7 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io(import.meta.env.VITE_BACKEND_URL || "http://localhost:5000", {
+    const newSocket = io(import.meta.env.VITE_BACKEND_URL || "https://alertnet-backend-mnnu.onrender.com", {
       transports: ["websocket"],
     });
     setSocket(newSocket);

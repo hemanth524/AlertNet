@@ -18,7 +18,7 @@ const AdminIncidents = () => {
 
     const fetchIncidents = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/admin/incidents", {
+        const res = await axios.get("https://alertnet-backend-mnnu.onrender.com/api/admin/incidents", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

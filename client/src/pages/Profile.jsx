@@ -18,7 +18,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (user?.avatar) {
-      setPreview(user.avatar.startsWith("http") ? user.avatar : `http://localhost:5000${user.avatar}`);
+      setPreview(user.avatar.startsWith("http") ? user.avatar : `https://alertnet-backend-mnnu.onrender.com${user.avatar}`);
     }
   }, [user?.avatar]);
 
@@ -49,7 +49,7 @@ const Profile = () => {
       form.append("phone", formData.phone);
       if (avatar) form.append("avatar", avatar);
 
-      const res = await axios.put(`http://localhost:5000/api/users/update`, form, {
+      const res = await axios.put(`https://alertnet-backend-mnnu.onrender.com/api/users/update`, form, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -61,7 +61,7 @@ const Profile = () => {
 
       // Update local avatar preview from backend response (after upload)
       const newAvatar = res.data.user.avatar;
-      setPreview(newAvatar.startsWith("http") ? newAvatar : `http://localhost:5000${newAvatar}`);
+      setPreview(newAvatar.startsWith("http") ? newAvatar : `https://alertnet-backend-mnnu.onrender.com${newAvatar}`);
 
       setMessage("✅ Profile updated successfully!");
     } catch (err) {
